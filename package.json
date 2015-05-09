@@ -1,0 +1,43 @@
+{
+  "name": "Maite",
+  "version": "0.0.0",
+  "description": "A simple web app to create playlists using Deezer api that let you create a room where users can vote for the next song to play.",
+  "main": "app.js",
+  "scripts": {
+    "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sujumayas/team-rocket.git"
+  },
+  "keywords": [
+    "music",
+    "player",
+    "deezer",
+    "playlist",
+    "vote",
+    "play",
+    "streaming"
+  ],
+  "author": "Equipo Rocket (Renato, Polo & Esen)",
+  "license": "Private",
+  "bugs": {
+    "url": "https://github.com/sujumayas/team-rocket/issues"
+  },
+  "homepage": "https://github.com/sujumayas/team-rocket",
+  "dependencies": {
+    "xtend": "^4.0.0",
+    "csurf": "^1.8.1",
+    "forms": "^1.1.1",
+    "express": "^4.12.3",
+    "serve-favicon": "~2.1.3",
+    "jade": "^1.9.2",
+    "express-stormpath": "^1.0.5",
+    "morgan": "~1.0.0",
+    "cookie-parser": "~1.0.1",
+    "body-parser": "~1.0.0",
+    "debug": "~0.7.4",
+    "mongodb": "*",
+    "monk": "*"
+  }
+}

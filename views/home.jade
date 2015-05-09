@@ -1,0 +1,26 @@
+html
+  head
+    title=title
+    link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
+  body
+    div.container
+      div.jumbotron
+        h1 Hello!
+
+        if user
+          p Welcome, #{user.fullName}
+          p
+            a.small(href="profile") Edit my profile
+          div.row
+            a.btn.btn-primary.col-md-2(href="/logout") Logout
+            a.btn.btn-primary.col-md-2.col-md-offset-1(href="/playlist") Generate a playlist
+            a.btn.btn-primary.col-md-4.col-md-offset-1(href="/event") Watch your current Event
+        else
+          p Welcome to my app, ready to get started?
+          p
+            a.btn.btn-primary(href="/login") Login now
+          p
+            span.small Don't have an account?
+            span &nbsp;
+            a.small(href="/register") Register now
+          
