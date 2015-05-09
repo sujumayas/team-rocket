@@ -7,6 +7,7 @@
 	<div class="playlist">
 		<iframe id="play" src="https://embed.spotify.com/?uri=spotify:trackset:Katy Perry playlist:08kTO4EW0jb07zNsCNM83w," style="width:640px; height:520px;" frameborder="0" allowtransparency="true"></iframe>
 		<button id="hola" onclick="cambiar()">GO</button>
+		<button id="holas" onclick="skip()">SKIP</button>
 	</div>
 </div>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
@@ -15,5 +16,7 @@
 		function cambiar(){
 			$('#play').attr('src',current+'4LloVtxNZpeh7q7xdi1DQc,');
 		}
-		
+		function skip(){
+			$('.clickable').hide();
+		}
 </script>
