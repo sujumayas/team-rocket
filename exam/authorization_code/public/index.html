@@ -28,6 +28,13 @@
         <div id="oauth">
         </div>
         <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+        <button class="btn btn-success" onclick="getUserPlaylists()">Playlists</button>
+      </div>
+      <div id="playlists">
+        
+      </div>
+      <div id="tracks">
+        
       </div>
     </div>
 
@@ -58,10 +65,54 @@
         <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}></dd>
       </dl>
     </script>
-
+    <!-- PLAYLISTS -->
+    <script id="playlists-template" type="text/x-handlebars-template">
+      <h2>Playlists</h2>
+      <ul>
+       {{#each playlists}}
+        <li>
+          <a href="#" onclick="getTracks('{{id}}',this)" id="{{name}}">{{ name }}</a>
+        </li>
+       {{/each}}
+      </ul>
+    </script>
+    <!-- TRACKS -->
+    <script id="tracks-template" type="text/x-handlebars-template">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          Tracks - <b>{{title}}</b>
+        </h3>
+      </div>
+      <div class="panel-body">
+        <ul class="list-group">
+         {{#each tracks.items}}
+          <li class="list-group-item">
+            <span class="badge">{{track.duration_ms}}</span>
+            <a href="{{track.uri}}">{{track.name}}</a>
+            <br/>
+            {{track.artists.0.name}}
+          </li>
+         {{/each}}
+        </ul>
+      </div>
+    </div>
+    </script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script>
+      var userId;
+      var playlists = Array();
+      var spotify = "https://api.spotify.com";
+      var access_token;
+
+      var playlistsSource ,
+          playlistsTemplate,
+          playlistsPlaceholder;
+
+      var tracksSource,
+          tracksTemplate,
+          tracksPlaceholder;
       (function() {
 
         /**
@@ -86,9 +137,17 @@
             oauthTemplate = Handlebars.compile(oauthSource),
             oauthPlaceholder = document.getElementById('oauth');
 
+            playlistsSource = document.getElementById('playlists-template').innerHTML,
+            playlistsTemplate = Handlebars.compile(playlistsSource),
+            playlistsPlaceholder = document.getElementById('playlists');
+
+            tracksSource = document.getElementById('tracks-template').innerHTML,
+            tracksTemplate = Handlebars.compile(tracksSource),
+            tracksPlaceholder = document.getElementById('tracks');
+
         var params = getHashParams();
 
-        var access_token = params.access_token,
+            access_token = params.access_token,
             refresh_token = params.refresh_token,
             error = params.error;
 
@@ -101,33 +160,20 @@
               access_token: access_token,
               refresh_token: refresh_token
             });
-            var userId = '';
+
             $.ajax({
-                url: 'https://api.spotify.com/v1/me',
+                url: spotify+'/v1/me',
                 headers: {
                   'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
+                  userId = response.id; 
+
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-                  userId = response.id;
                   $('#login').hide();
                   $('#loggedin').show();
+
                 }
-            });
-            $.ajax({
-              url: 'https://api.spotify.com/v1/users/12144259167/playlists',
-              headers: {
-                  'Authorization': 'Bearer ' + access_token
-              }
-            })
-            .done(function(response) {
-              console.log(response);
-            })
-            .fail(function() {
-              console.log("error");
-            })
-            .always(function() {
-              console.log("complete");
             });
             
           } else {
@@ -152,6 +198,54 @@
           }, false);
         }
       })();
+
+      function getUserPlaylists(){
+        $.ajax({
+          url: spotify+'/v1/users/'+userId+'/playlists',
+          headers: {
+              'Authorization': 'Bearer ' + access_token
+          }
+        })
+        .done(function(response) {
+          var playlistsTemp = Array();
+          for (var i = 0; i < response.items.length; i++) {
+            if (userId == response.items[i].owner.id) {
+              playlistsTemp.push(response.items[i]);
+            };
+          };
+          console.log(playlistsTemp);
+          playlistsPlaceholder.innerHTML = playlistsTemplate({
+            playlists: playlistsTemp
+          });
+        })
+        .fail(function() {
+          console.log("error");
+        })
+        .always(function() {
+          console.log("complete");
+        });
+      }
+      function getTracks(id,obj){
+        $.ajax({
+          url: spotify+'/v1/users/'+userId+'/playlists/'+id+'/tracks',
+          headers: {
+              'Authorization': 'Bearer ' + access_token
+          }
+        })
+        .done(function(response) {
+          console.log(response);
+          tracksPlaceholder.innerHTML = tracksTemplate({
+                tracks: response,
+                title: obj.id
+          });
+        })
+        .fail(function() {
+          console.log("error");
+        })
+        .always(function() {
+          console.log("complete");
+        });
+      }
     </script>
 </html>
 
