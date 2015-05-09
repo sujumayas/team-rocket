@@ -76,12 +76,7 @@
 		DZ.player.addToQueue([3135556]);
 	}
 	function callData(){
-		$.ajax({
-			url: 'http://api.deezer.com/track/3135556',
-			response_type: 'token',
-			datatype: 'jsonp',
-		})
-		.done(function(data) {
+		DZ.api('track/3135556', 'GET', function(data){
 			console.log(data);
 		});
 	}
