@@ -101,7 +101,7 @@
               access_token: access_token,
               refresh_token: refresh_token
             });
-
+            var userId = '';
             $.ajax({
                 url: 'https://api.spotify.com/v1/me',
                 headers: {
@@ -109,11 +109,27 @@
                 },
                 success: function(response) {
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
+                  userId = response.id;
                   $('#login').hide();
                   $('#loggedin').show();
                 }
             });
+            $.ajax({
+              url: 'https://api.spotify.com/v1/users/12144259167/playlists',
+              headers: {
+                  'Authorization': 'Bearer ' + access_token
+              }
+            })
+            .done(function(response) {
+              console.log(response);
+            })
+            .fail(function() {
+              console.log("error");
+            })
+            .always(function() {
+              console.log("complete");
+            });
+            
           } else {
               // render initial screen
               $('#login').show();
