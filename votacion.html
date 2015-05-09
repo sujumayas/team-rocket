@@ -13,7 +13,7 @@
 		<div id="dz-root"></div>
 		<div id="player" style="width:100%;" align="center"></div>
 		<br/>
-		<div id="voting">
+		<div id="voting" class="col-sm-7">
 
 		</div>
 		<div id="slider_seek" class="progressbarplay" style="">
@@ -65,27 +65,7 @@
     // HACK FOR DEVELOPING STATE
 	var crearData = document.getElementById('dataFalsa');
 	crearData.addEventListener('click', function(){
-		initVotingSystem([
-			{	
-				id: '916424', 
-				cover: 'cover',
-				title: 'Title',
-				artist_name: 'Artista',
-				votes : 0,
-			},{
-				id: '6026499', 
-				cover: 'cover',
-				title: 'Titulo de la segunda cancion',
-				artist_name: 'Artista',
-				votes : 0,
-			},{
-				id: '71397363', 
-				cover: 'cover',
-				title: 'Titulo de la primera cancion',
-				artist_name: 'Artista',
-				votes : 0,
-			}
-		]);
+		initVotingSystem(tracksIDs);
 	});
 
 	//Hack to reset voting: 
@@ -122,27 +102,7 @@
 	}
 
 	function resetVoting(){
-		initVotingSystem([
-			{	
-				id: '916424', 
-				cover: 'cover',
-				title: 'Title',
-				artist_name: 'Artista',
-				votes : 0,
-			},{
-				id: '6026499', 
-				cover: 'cover',
-				title: 'Titulo de la segunda cancion',
-				artist_name: 'Artista',
-				votes : 0,
-			},{
-				id: '71397363', 
-				cover: 'cover',
-				title: 'Titulo de la primera cancion',
-				artist_name: 'Artista',
-				votes : 0,
-			}
-		]);
+		initVotingSystem(tracksIDs);
 	}
 
 	function onPlayerLoaded() {
