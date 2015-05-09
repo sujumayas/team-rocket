@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-
+	
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	<script type="text/javascript" src="http://cdn-files.deezer.com/js/min/dz-v00202681.js"></script>
 
 	<style type="text/css">
@@ -16,34 +15,109 @@
 	</style>
 </head>
 <body>
-<div id="dz-root"></div>
-<div id="player" style="width:100%;" align="center"></div>
-<br/>
-<div id="controlers">
- 
-	<input type="button" onclick="DZ.player.playAlbum(302127); return false;" value="Play Daft Punk - Discovery"/>
-	<input type="button" onclick="DZ.player.playAlbum(301775); return false;" value="Play Daft Punk - Homework"/>
-	<br/>
-	<input type="button" onclick="DZ.player.playRadio(203); return false;" value="Play Radio"/>
-	<input type="button" onclick="DZ.player.playSmartRadio(13); return false;" value="Play Smart Radio"/>
-	
-	<br/>
-	<input type="button" onclick="DZ.player.play(); return false;" value="play"/>
-	<input type="button" onclick="DZ.player.pause(); return false;" value="pause"/>
-	<input type="button" onclick="DZ.player.prev(); return false;" value="prev"/>
-	<input type="button" onclick="DZ.player.next(); return false;" value="next"/>
-	<br/>
-	<input type="button" onclick="DZ.player.setVolume(20); return false;" value="set Volume 20"/>
-	<input type="button" onclick="DZ.player.setVolume(80); return false;" value="set Volume 80"/>
-	<button id="theButton" onclick="AddSongToPlaylist()">Agregar 2</button>
-	<button onclick="callData()">Call data</button>
-	<br/><br/><br/>
-</div>
-<div id="slider_seek" class="progressbarplay" style="">
-  <div class="bar" style="width: 0%;"></div>
-</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-7">
+				
+		
+		<div id="dz-root"></div>
+		<div id="player" style="width:100%;" align="center"></div>
+		<br/>
+		<div id="controlers">
+		 
+			<input type="button" onclick="DZ.player.playAlbum(302127); return false;" value="Play Daft Punk - Discovery"/>
+			<input type="button" onclick="DZ.player.playAlbum(301775); return false;" value="Play Daft Punk - Homework"/>
+			<br/>
+			<input type="button" onclick="DZ.player.playRadio(203); return false;" value="Play Radio"/>
+			<input type="button" onclick="DZ.player.playSmartRadio(13); return false;" value="Play Smart Radio"/>
+			
+			<br/>
+			<input type="button" onclick="DZ.player.play(); return false;" value="play"/>
+			<input type="button" onclick="DZ.player.pause(); return false;" value="pause"/>
+			<input type="button" onclick="DZ.player.prev(); return false;" value="prev"/>
+			<input type="button" onclick="DZ.player.next(); return false;" value="next"/>
+			<br/>
+			<input type="button" onclick="DZ.player.setVolume(20); return false;" value="set Volume 20"/>
+			<input type="button" onclick="DZ.player.setVolume(80); return false;" value="set Volume 80"/>
+			<button id="theButton" onclick="AddSongToPlaylist()">Agregar 2</button>
+			<button onclick="callData()">Call data</button>
+			<br/><br/><br/>
+		</div>
+		<div id="slider_seek" class="progressbarplay" style="">
+		  <div class="bar" style="width: 0%;"></div>
+		</div>
+
+
+		  <div id="buscador">
+	        <div class="panel panel-default">
+	          <div class="panel-heading">
+	              <div class="input-group">
+	                <input id="texto" type="text" class="form-control" placeholder="Buscar...">
+	                <span class="input-group-btn">
+	                  <button class="btn btn-default" onclick="buscar()">Go!</button>
+	                </span>
+	              </div>              <!-- /input-group -->
+	          </div>
+	            <!-- TRACKS -->
+
+	          <div class="panel-body">
+                    <div id="tracks" class="list-group">
+      				</div>
+	          </div>
+	        </div>
+	      </div>
+				    <script id="tracks-template" type="text/x-handlebars-template">
+		             {{#each tracks}}
+		              <a href="#" class="list-group-item">
+		                <span class="badge">
+	      					<button class="btn btn-success btn-sm" onclick="addPlaylist('{{id}}'')">+</button>
+		                </span>
+		                {{title}} - {{artist.name}}
+		              </a >
+		             {{/each}}
+				    </script>
+			</div>
+			<div class="col-sm-5">
+				
+			</div>
+		</div>
+	</div>
+
+
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
 <script>
+
+      var tracksSource,
+          tracksTemplate,
+          tracksPlaceholder;
+    (function() {
+        tracksSource = document.getElementById('tracks-template').innerHTML,
+        tracksTemplate = Handlebars.compile(tracksSource),
+        tracksPlaceholder = document.getElementById('tracks');
+    })();
+    
+    function buscar(){
+    	var textoBusqueda = $('#texto').val();
+    	DZ.api('search/?q='+textoBusqueda, 'GET', function(data){
+			tracksPlaceholder.innerHTML = tracksTemplate({
+            	tracks: data.data
+          	});
+		});
+    }
 	$(document).ready(function(){
+
+
+
+
+
+
+
+
+
+
+          
 		$("#controlers input").attr('disabled', true);
 		
 		$("#slider_seek").click(function(evt,arg){
