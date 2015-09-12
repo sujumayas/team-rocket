@@ -1,8 +1,210 @@
 html
   head
     title=title
+    link(rel="stylesheet",href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css")
+    link(rel="stylesheet",href="css/playlist.css")
+    script(type="text/javascript",src="http://cdn-files.deezer.com/js/min/dz-v00202681.js")
 body
     div.container
-      div.jumbotron
-        h1 Routes for Playlist Working!
-        p Now to add all the things...
+        div.jumbotron
+            h1 Your Playlists
+            a.btn.btn-primary(href="/") Volver...
+        div.row
+            div.col-sm-7
+                div#dz-root
+
+                //BUSCADOR
+                div#buscador
+                    div.panel.panel-default
+                        div.input-group
+                            input.form-control#texto(type="text",placeholder="Buscar...")
+                            span.input-group-btn
+                                button.btn.btn-default(onclick="buscar()") Go!
+                    //TRACKS
+                    div.panel-body
+                        div.list-group#tracks
+            div.col-sm-5
+                //LISTA
+                div.panel.panel-default
+                    div.panel-heading
+                        h3 Canciones
+                    div.panel-body
+                        div.list-group#pickedTracks
+
+            //Voting Sistem
+            div.row
+                div.col-sm-7#voting
+                div.col-sm-5
+                    button#dataFalsa Iniciar Votacion
+                    button#resetVotingly End Voting 
+            div#player(align="center",style="width:100%")
+    
+
+    // The Tracks Template
+    script#tracks-template(type="text/x-handlebars-template").
+        {{#each tracks}}
+            <a href="#" class="list-group-item">
+            <span class="badge plus-badge">
+                <button class="plus-button" onclick="agregarTrack('{{id}}','{{album.cover}}','{{title}}','{{artist.name}}')">+</button>
+            </span>
+            <strong>{{title}}</strong> - <span>{{artist.name}}</span>
+          </a >
+         {{/each}}
+
+    
+    // The Picked Tracks Template
+    script#pickedTracks-template(type="text/x-handlebars-template").
+        {{#each pickedTracks}}
+          <a href="#" class="list-group-item">
+            <span class="badge minus-badge">
+                    <button class="minus-button" >-</button>
+            </span>
+            <strong>{{title}}</strong> - <span>{{artist_name}}</span>
+          </a >
+         {{/each}}
+
+    
+    // The Voting Template
+    script#voting-template(type="text/x-handlebars-template").
+        <img src="{{song1.cover}}" alt="" class="song1">
+        <button id="a-option" onclick="singleVote('{{song1.id}}')">{{song1.title}}</button>
+            <img src="{{song2.cover}}" alt="" class="song2">
+        <button id="b-option" onclick="singleVote('{{song2.id}}')">{{song2.title}}</button>
+
+
+
+script(type="text/javascript",src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
+script(src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js")
+
+script.
+    var tracksSource,
+          tracksTemplate,
+          tracksPlaceholder;
+    var pickedTracksSource,
+          pickedTracksTemplate,
+          pickedTracksPlaceholder;
+
+
+    var tracksIDs = Array();
+    (function() {
+        tracksSource = document.getElementById('tracks-template').innerHTML,
+        tracksTemplate = Handlebars.compile(tracksSource),
+        tracksPlaceholder = document.getElementById('tracks');
+        console.dir(tracksTemplate);
+
+        pickedTracksSource = document.getElementById('pickedTracks-template').innerHTML,
+        pickedTracksTemplate = Handlebars.compile(pickedTracksSource),
+        pickedTracksPlaceholder = document.getElementById('pickedTracks');
+    })();
+
+    function buscar(){
+        var textoBusqueda = $('#texto').val();
+        console.log("Searching for: " + textoBusqueda);
+        DZ.api('search/?q='+textoBusqueda, 'GET', function(data){
+            tracksPlaceholder.innerHTML = tracksTemplate({
+                tracks: data.data
+            });
+        });
+    }
+    function agregarTrack(id,cover,title,artist){
+        console.log(artist);
+        var currentIndex = tracksIDs.push({id:id,cover:cover,title:title,artist_name:artist,votes:0}) - 1;
+        pickedTracksPlaceholder.innerHTML = pickedTracksTemplate({
+            pickedTracks : tracksIDs
+        });
+    }
+
+
+
+    //Voting 
+    var votingSource,
+          votingTemplate,
+          votingPlaceholder;
+    (function() {
+        votingSource = document.getElementById('voting-template').innerHTML,
+        votingTemplate = Handlebars.compile(votingSource),
+        votingPlaceholder = document.getElementById('voting');
+    })();
+    
+    var song1, song2;
+  
+    function initVotingSystem(songList){
+        song1 = songList.pop();
+        song2 = songList.pop();
+        votingPlaceholder.innerHTML = votingTemplate({
+                song1: song1,
+                song2: song2,
+            });
+    }
+
+    // HACK FOR DEVELOPING STATE
+    var crearData = document.getElementById('dataFalsa');
+    crearData.addEventListener('click', function(){
+        initVotingSystem(tracksIDs);
+    });
+
+    //Hack to reset voting: 
+    var reseter = document.getElementById('resetVotingly');
+    reseter.addEventListener('click', function(){
+        endVoting();
+    })
+
+    function singleVote(songId){
+        console.log('The SongId: ' + songId);
+        console.log('The Song1 Id: ' + song1.id);
+        if(songId == song1.id){
+            song1.votes++;
+            console.log('Song Name: ' + song1.title);
+            console.log('Votes: '+ song1.votes);
+        }else{
+            song2.votes++;
+            console.log('Song Name: ' + song2.title);
+            console.log('Votes: '+ song2.votes);
+        }
+    }
+
+    function endVoting(){
+        if(song1.votes > song2.votes){
+            DZ.player.addToQueue([song1.id]);
+            DZ.player.play();
+            resetVoting();
+
+        }else{
+            DZ.player.addToQueue([song2.id]);
+            DZ.player.play();
+            resetVoting();
+        }
+    }
+
+    function resetVoting(){
+        initVotingSystem(tracksIDs);
+    }
+
+    
+    function onPlayerLoaded() {
+        DZ.Event.subscribe('current_track', function(arg){
+            console.log('current_track: '+ arg.index+' Title: '+arg.track.title+' Album: '+ arg.track.album.title);
+        });
+        DZ.Event.subscribe('player_position', function(arg){
+            $("#slider_seek").find('.bar').css('width', (100*arg[0]/arg[1]) + '%');
+        });
+    }
+
+
+    DZ.init({
+        appId  : '8',
+        channelUrl : 'http://developers.deezer.com/examples/channel.php',
+        player : {
+            container : 'player',
+            cover : true,
+            playlist : true,
+            width : 650,
+            height : 300,
+            onload : onPlayerLoaded
+        }
+    });
+
+
+
+
+

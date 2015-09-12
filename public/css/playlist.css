@@ -1,0 +1,22 @@
+
+
+
+/* Plus and Minus Buttons */
+.plus-button,
+.minus-button{
+	color: white;
+    background-color: transparent;
+    border: none;
+    height: 20px;
+    width: 20px;
+}
+
+/* The plus button */
+.plus-badge{
+	background-color: green;
+}
+
+.minus-badge {
+	background-color: red;
+}
+
