@@ -18,7 +18,7 @@ app.set('view engine', 'jade');
 
 //Stormpath middleware to check if user is logged in and create a login screen to manage that.
 var stormpathMiddleware = stormpath.init(app, {
-  apiKeyFile: '/Users/eespinosa/Documents/Coding/.stormpath/apiKey-45KO1DLE8BTK6HF2D81RTBZ9S.properties',
+  apiKeyFile: '../.stormpath/apiKey-45KO1DLE8BTK6HF2D81RTBZ9S.properties',
   application: 'https://api.stormpath.com/v1/applications/5rKNGhCLw9Qc029L8nawig',
   secretKey: 'EquipoRocketAlRescate123#!¡',
   expandCustomData: true,
